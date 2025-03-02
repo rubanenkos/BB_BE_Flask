@@ -2,6 +2,7 @@ from app import db
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from flask_sqlalchemy import SQLAlchemy
+from app.responses import UserResponse
 from app.services import auth_service
 from flask import jsonify
 from app.utils import ErrorHandler
@@ -35,6 +36,16 @@ class User(db.Model):
         access_token = auth_service.generate_access_token(user.user_id)
 
         return jsonify({ "message": "Login successful", "access_token": access_token}), 200
+
+    @staticmethod
+    def get_user_by_user_id(user_id):
+        try:
+            user = User.query.filter_by(user_id=user_id).first()
+            if not user:
+                return {"error": "User not found"}, 404
+            return UserResponse.response_user(user)
+        except Exception as e:
+            return ErrorHandler.handle_error(e, message="Failed to fetch user", status_code=500)
 
     @staticmethod
     def create_user(data):

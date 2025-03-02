@@ -13,3 +13,4 @@ from app.responses.blood_fridge_response import BloodFridgeResponse
 from app.responses.transport_sensor_response import TransportSensorResponse
 from app.responses.blood_inventory_response import BloodInventoryResponse
 from app.responses.blood_transaction_response import BloodTransactionResponse
+from app.responses.user_response import UserResponse
