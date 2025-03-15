@@ -15,6 +15,13 @@ def register():
 def get_user_by_user_id(user_id):
     return User.get_user_by_user_id(user_id)
 
+@auth_bp.route('/user/email', methods=['GET'])
+def get_user_by_email():
+    user_email = request.args.get('email')
+    if not user_email:
+        return {"error": "Email parameter is required"}, 400
+    return User.get_user_by_user_email(user_email)
+
 @auth_bp.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
