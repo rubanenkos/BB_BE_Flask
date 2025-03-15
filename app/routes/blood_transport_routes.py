@@ -24,3 +24,13 @@ def create_transport():
 def update_transport(blood_transport_id):
     data = request.get_json()
     return BloodTransport.update_transport(blood_transport_id, data)
+
+@blood_transport_bp.route('/blood-transport/start/<int:blood_transport_id>', methods=['PUT'])
+def start_transport(blood_transport_id):
+    return BloodTransport.start_transport(blood_transport_id)
+
+
+@blood_transport_bp.route('/blood-transport/complete/<int:blood_transport_id>', methods=['PUT'])
+def complete_transport(blood_transport_id):
+    return BloodTransport.complete_transport(blood_transport_id)
+

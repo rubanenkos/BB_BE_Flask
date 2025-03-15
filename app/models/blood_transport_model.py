@@ -1,9 +1,13 @@
+from datetime import datetime, UTC
+
 from app import db
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship, backref
 from app.utils import ErrorHandler
 from app.responses import BloodTransportResponse
 from flask import Blueprint, request, jsonify
+
+
 
 class BloodTransport(db.Model):
     __tablename__ = "blood_transport"
@@ -44,10 +48,10 @@ class BloodTransport(db.Model):
     @staticmethod
     def get_transport_by_user_id(user_id):
         try:
-            transport = BloodTransport.query.filter_by(user_id=user_id).first()
+            transport = BloodTransport.query.filter_by(user_id=user_id).all()
             if not transport:
                 return ErrorHandler.handle_error(None, message="Transport not found", status_code=404)
-            return BloodTransportResponse.response_transport(transport)
+            return BloodTransportResponse.response_transports_for_user(transport)
         except Exception as e:
             return ErrorHandler.handle_error(e, message="Failed to retrieve transport", status_code=500)
 
@@ -88,3 +92,35 @@ class BloodTransport(db.Model):
         except Exception as e:
             db.session.rollback()
             return ErrorHandler.handle_error(e, message="Failed to update transport", status_code=500)
+
+    @staticmethod
+    def start_transport(blood_transport_id):
+        try:
+            transport = BloodTransport.query.get(blood_transport_id)
+            if not transport:
+                return ErrorHandler.handle_error(None, message="Transport not found", status_code=404)
+
+            transport.start_time =  datetime.now(UTC)
+            transport.status = "In progress"
+
+            db.session.commit()
+            return {"message": "Transport started successfully", "start_time": transport.start_time}, 200
+        except Exception as e:
+            db.session.rollback()
+            return ErrorHandler.handle_error(e, message="Failed to start transport", status_code=500)
+
+    @staticmethod
+    def complete_transport(blood_transport_id):
+        try:
+            transport = BloodTransport.query.get(blood_transport_id)
+            if not transport:
+                return ErrorHandler.handle_error(None, message="Transport not found", status_code=404)
+
+            transport.end_time =  datetime.now(UTC)
+            transport.status = "Completed"
+
+            db.session.commit()
+            return {"message": "Transport completed successfully", "end_time": transport.end_time}, 200
+        except Exception as e:
+            db.session.rollback()
+            return ErrorHandler.handle_error(e, message="Failed to complete transport", status_code=500)
