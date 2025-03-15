@@ -11,6 +11,10 @@ def get_all_transports(blood_bank_id):
 def get_transport_by_id(blood_transport_id):
     return BloodTransport.get_transport_by_id(blood_transport_id)
 
+@blood_transport_bp.route('/blood-transport/user/<int:user_id>', methods=['GET'])
+def get_transport_by_user_id(user_id):
+    return BloodTransport.get_transport_by_user_id(user_id)
+
 @blood_transport_bp.route('/create-blood-transport', methods=['POST'])
 def create_transport():
     data = request.get_json()

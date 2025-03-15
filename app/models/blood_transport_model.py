@@ -42,6 +42,16 @@ class BloodTransport(db.Model):
             return ErrorHandler.handle_error(e, message="Failed to retrieve transport", status_code=500)
 
     @staticmethod
+    def get_transport_by_user_id(user_id):
+        try:
+            transport = BloodTransport.query.filter_by(user_id=user_id).first()
+            if not transport:
+                return ErrorHandler.handle_error(None, message="Transport not found", status_code=404)
+            return BloodTransportResponse.response_transport(transport)
+        except Exception as e:
+            return ErrorHandler.handle_error(e, message="Failed to retrieve transport", status_code=500)
+
+    @staticmethod
     def create_transport(data):
         try:
             new_transport = BloodTransport(
