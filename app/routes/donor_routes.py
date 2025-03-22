@@ -21,6 +21,11 @@ def update_donor(donor_id):
     data = request.get_json()
     return Donor.update_donor(donor_id, data)
 
+@donor_bp.route('/update-donor/phone/<int:user_id>', methods=['PUT'])
+def update_donor_phone(user_id):
+    data = request.get_json()
+    return Donor.update_donor_phone(user_id, data)
+
 @donor_bp.route('/donation-session/<int:donor_id>', methods=['GET'])
 def get_donation_sessions_by_donor_id(donor_id):
     return DonationSession.get_sessions_by_donor(donor_id)
