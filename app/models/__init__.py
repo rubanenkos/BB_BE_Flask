@@ -1,4 +1,4 @@
-from app.models.role_model import UserRole
+from app.models.user_role_model import UserRole
 from app.models.user_model import User
 from app.models.blood_bank_model import BloodBank
 from app.models.hospital_model import Hospital
@@ -16,4 +16,3 @@ from app.models.blood_fridge import BloodFridge
 from app.models.transport_sensor_model import TransportSensor
 from app.models.blood_transaction_model import BloodTransaction
 from app.models.blood_inventory_model import BloodInventory
-# from app.models.blood_transaction_model import BloodTransaction
