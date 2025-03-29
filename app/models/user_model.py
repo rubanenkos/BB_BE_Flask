@@ -53,6 +53,16 @@ class User(db.Model):
             return ErrorHandler.handle_error(e, message="Failed to fetch user", status_code=500)
 
     @staticmethod
+    def get_user_by_user_email(user_email):
+        try:
+            user = User.query.filter_by(email=user_email).first()
+            if not user:
+                return {"error": "User not found"}, 404
+            return UserResponse.response_user(user)
+        except Exception as e:
+            return ErrorHandler.handle_error(e, message="Failed to fetch user", status_code=500)
+
+    @staticmethod
     def create_user(data):
         try:
             existing_user = User.query.filter(

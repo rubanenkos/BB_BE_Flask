@@ -73,3 +73,20 @@ class Donor(db.Model):
         except Exception as e:
             db.session.rollback()
             return ErrorHandler.handle_error(e, message="Failed to update donor", status_code=500)
+
+    @staticmethod
+    def update_donor_phone(user_id, data):
+        try:
+            donor = Donor.query.filter_by(user_id=user_id).first()
+            if not donor:
+                return ErrorHandler.handle_error(None, message="Donor not found", status_code=404)
+
+            contact_number = data.get("contact_number")
+            if contact_number is not None:
+                donor.contact_number = contact_number
+
+            db.session.commit()
+            return {"message": "Donor phone number updated successfully"}, 200
+        except Exception as e:
+            db.session.rollback()
+            return ErrorHandler.handle_error(e, message="Failed to update donor phone number", status_code=500)
