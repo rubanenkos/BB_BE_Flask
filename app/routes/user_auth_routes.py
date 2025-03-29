@@ -11,6 +11,10 @@ def register():
     data = request.get_json()
     return User.create_user(data)
 
+@auth_bp.route('/users', methods=['GET'])
+def get_all_users():
+    return User.get_all_users()
+
 @auth_bp.route('/user/<int:user_id>', methods=['GET'])
 def get_user_by_user_id(user_id):
     return User.get_user_by_user_id(user_id)

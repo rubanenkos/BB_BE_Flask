@@ -11,3 +11,17 @@ class UserResponse:
             "role_id": user.role_id,
         }
         return jsonify(user_data)
+
+    @staticmethod
+    def response_all_users(users):
+        users_data = [
+            {
+                "user_id": user.user_id,
+                "name": user.name,
+                "email": user.email,
+                "role_id": user.role_id,
+            }
+            for user in users
+        ]
+        return jsonify(users_data)
+

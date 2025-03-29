@@ -38,6 +38,11 @@ class User(db.Model):
         return jsonify({ "message": "Login successful", "access_token": access_token}), 200
 
     @staticmethod
+    def get_all_users():
+        users = User.query.all()
+        return UserResponse.response_all_users(users)
+
+    @staticmethod
     def get_user_by_user_id(user_id):
         try:
             user = User.query.filter_by(user_id=user_id).first()
