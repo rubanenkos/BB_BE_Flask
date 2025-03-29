@@ -20,6 +20,7 @@ class UserResponse:
                 "name": user.name,
                 "email": user.email,
                 "role_id": user.role_id,
+                "role_name": user.role.name,
             }
             for user in users
         ]

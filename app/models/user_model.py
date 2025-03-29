@@ -1,6 +1,6 @@
 from app import db
 from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, joinedload
 from flask_sqlalchemy import SQLAlchemy
 from app.responses import UserResponse
 from app.services import auth_service
@@ -39,8 +39,10 @@ class User(db.Model):
 
     @staticmethod
     def get_all_users():
-        users = User.query.all()
+        # users = User.query.all()
+        users = User.query.options(joinedload(User.role)).all()
         return UserResponse.response_all_users(users)
+
 
     @staticmethod
     def get_user_by_user_id(user_id):
