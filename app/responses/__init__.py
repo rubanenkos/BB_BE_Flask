@@ -15,3 +15,4 @@ from app.responses.blood_inventory_response import BloodInventoryResponse
 from app.responses.blood_transaction_response import BloodTransactionResponse
 from app.responses.user_response import UserResponse
 from app.responses.user_roles_response import UserRoleResponse
+from app.responses.centers_response import BloodDonationCenterResponse

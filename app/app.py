@@ -4,8 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
 
-
-
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 jwt = JWTManager()
@@ -21,7 +19,7 @@ def create_app():
     with app.app_context():
         db.create_all()
 
-    from app.routes import auth_bp, blood_bank_bp, hospital_bp, blood_group_bp, donor_bp, supply_bp, blood_request_bp, blood_transport_bp, blood_fridge_bp, transport_sensor_bp, blood_inventory_bp, user_role_bp
+    from app.routes import auth_bp, blood_bank_bp, hospital_bp, blood_group_bp, donor_bp, supply_bp, blood_request_bp, blood_transport_bp, blood_fridge_bp, transport_sensor_bp, blood_inventory_bp, user_role_bp, centers_bp
     app.register_blueprint(auth_bp)
     app.register_blueprint(blood_bank_bp)
     app.register_blueprint(hospital_bp)
@@ -34,4 +32,5 @@ def create_app():
     app.register_blueprint(transport_sensor_bp)
     app.register_blueprint(blood_inventory_bp)
     app.register_blueprint(user_role_bp)
+    app.register_blueprint(centers_bp)
     return app
