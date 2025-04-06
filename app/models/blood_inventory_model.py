@@ -87,7 +87,7 @@ class BloodInventory(db.Model):
                 return ErrorHandler.handle_error(None, message="Blood request not found", status_code=404)
 
             request.blood_bank_id = blood_bank_id
-            request.status = "inprogress"
+            request.status = "In progress"
             db.session.commit()
 
             for blood_part_request in blood_part_requests:
