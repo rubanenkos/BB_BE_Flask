@@ -27,6 +27,13 @@ class BloodRequest(db.Model):
         except Exception as e:
             return ErrorHandler.handle_error(e, message="Bank not found", status_code=404)
 
+    @staticmethod
+    def get_all_requests_hospital(hospital_id):
+        try:
+            requests = BloodRequest.query.filter_by(hospital_id=hospital_id).all()
+            return BloodRequestResponse.response_all_requests(requests)
+        except Exception as e:
+            return ErrorHandler.handle_error(e, message="Hospital not found", status_code=404)
 
     @staticmethod
     def get_request_by_id(request_blood_id):
