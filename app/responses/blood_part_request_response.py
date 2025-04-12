@@ -8,6 +8,7 @@ class BloodPartRequestResponse:
                 "request_blood_id": request.request_blood_id,
                 "blood_part_id": request.blood_part_id,
                 "blood_part_name": request.blood_part.name if request.blood_part else None,
+                "blood_group_id": request.blood_group_id,
                 "quantity": request.quantity,
             }
             for request in requests
