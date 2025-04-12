@@ -24,7 +24,6 @@ class BloodPartRequest(db.Model):
     def get_all_requests_by_request_id(request_blood_id):
         try:
             requests = BloodPartRequest.query.filter_by(request_blood_id=request_blood_id).all()
-            print(requests)
             return BloodPartRequestResponse.response_all_requests(requests)
         except Exception as e:
             return ErrorHandler.handle_error(e, message="Failed to retrieve blood part requests", status_code=500)
