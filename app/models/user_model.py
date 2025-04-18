@@ -90,3 +90,20 @@ class User(db.Model):
             db.session.rollback()
             return ErrorHandler.handle_error(e, message="Failed to create user", status_code=500)
 
+    @staticmethod
+    def change_password(user_id, old_password, new_password):
+        try:
+            user = User.query.filter_by(user_id=user_id).first()
+            if not user:
+                return ErrorHandler.handle_error(None, message="User not found", status_code=404)
+
+            if not auth_service.check_password(user.password, old_password):
+                return ErrorHandler.handle_error(None, message="Old password is incorrect", status_code=401)
+
+            user.set_password(new_password)
+            db.session.commit()
+
+            return jsonify({"message": "Password updated successfully"}), 200
+        except Exception as e:
+            db.session.rollback()
+            return ErrorHandler.handle_error(e, message="Failed to update password", status_code=500)

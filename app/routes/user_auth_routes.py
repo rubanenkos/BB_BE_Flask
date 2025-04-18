@@ -31,6 +31,19 @@ def login():
     data = request.get_json()
     return User.authenticate(data)
 
+@auth_bp.route('/user/change-password/<int:user_id>', methods=['POST'])
+def change_password(user_id):
+    data = request.get_json()
+
+    old_password = data.get('old_password')
+    new_password = data.get('new_password')
+
+    if not old_password or not new_password:
+        return {"error": "Both old_password and new_password are required"}, 400
+
+    return User.change_password(user_id, old_password, new_password)
+
+
 
 @auth_bp.route('/protected', methods=['GET'])
 @jwt_required()
