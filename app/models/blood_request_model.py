@@ -1,3 +1,7 @@
+from datetime import date
+
+from flask import jsonify
+
 from app import db
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship, backref
@@ -34,6 +38,59 @@ class BloodRequest(db.Model):
             return BloodRequestResponse.response_all_requests(requests)
         except Exception as e:
             return ErrorHandler.handle_error(e, message="Hospital not found", status_code=404)
+
+    @staticmethod
+    def get_requests_analytics_by_hospital(hospital_id):
+        try:
+            from sqlalchemy import extract
+
+            requests = BloodRequest.query.filter_by(hospital_id=hospital_id).all()
+
+            total_requests = len(requests)
+
+            current_month = date.today().month
+            current_year = date.today().year
+            monthly_requests = BloodRequest.query.filter(
+                BloodRequest.hospital_id == hospital_id,
+                extract('month', BloodRequest.request_date) == current_month,
+                extract('year', BloodRequest.request_date) == current_year
+            ).count()
+
+
+            completed_requests = BloodRequest.query.filter_by(
+                hospital_id=hospital_id,
+                status="Delivered"
+            ).count()
+
+            waiting_requests = BloodRequest.query.filter_by(
+                hospital_id=hospital_id,
+                status="Waiting for processing"
+            ).count()
+
+            transit_requests = BloodRequest.query.filter_by(
+                hospital_id=hospital_id,
+                status="In Transit"
+            ).count()
+
+            assigned_requests = BloodRequest.query.filter_by(
+                hospital_id=hospital_id,
+                status="Assigned"
+            ).count()
+
+            response_data = {
+                "hospital_id": hospital_id,
+                "total_requests": total_requests,
+                "current_month_requests": monthly_requests,
+                "completed_requests": completed_requests,
+                "waiting_requests": waiting_requests,
+                "transit": transit_requests,
+                "assigned_requests": assigned_requests,
+            }
+
+            return jsonify(response_data), 200
+
+        except Exception as e:
+            return ErrorHandler.handle_error(e, message="Failed to retrieve analytics", status_code=500)
 
     @staticmethod
     def get_request_by_id(request_blood_id):
