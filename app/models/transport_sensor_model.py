@@ -1,5 +1,6 @@
+
 from app import db
-from sqlalchemy import Column, Integer, Float, ForeignKey, String
+from sqlalchemy import Column, Integer, Float, ForeignKey, String, DateTime, desc
 from sqlalchemy.orm import relationship, backref
 from app.responses import TransportSensorResponse
 from app.utils import ErrorHandler
@@ -12,7 +13,7 @@ class TransportSensor(db.Model):
     blood_fridge_id = Column(Integer, ForeignKey('blood_fridge.blood_fridge_id'), nullable=False)
     blood_transport_id = Column(Integer, ForeignKey('blood_transport.blood_transport_id'), nullable=False)
     temperature = Column(Float, nullable=False)
-    time_stamp = Column(String(50), nullable=False)
+    time_stamp = Column(DateTime, nullable=False)
     status = Column(String(50), nullable=False)
 
     blood_fridge = relationship("BloodFridge", backref="transport_sensors")
@@ -33,7 +34,7 @@ class TransportSensor(db.Model):
             sensors = TransportSensor.query.filter_by(
                 blood_transport_id=blood_transport_id,
                 blood_fridge_id=blood_fridge_id
-            ).all()
+            ).order_by(desc(TransportSensor.time_stamp)).all()
             return TransportSensorResponse.response_all_sensors(sensors)
         except Exception as e:
             return ErrorHandler.handle_error(e, message="Failed to fetch transport sensors", status_code=500)
