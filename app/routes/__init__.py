@@ -9,3 +9,5 @@ from app.routes.blood_transport_routes import blood_transport_bp
 from app.routes.blood_fridge_routes import blood_fridge_bp
 from app.routes.transport_sensor_routes import transport_sensor_bp
 from app.routes.blood_inventory_routes import blood_inventory_bp
+from app.routes.user_roles_routes import user_role_bp
+from app.routes.blood_donation_center_routes import centers_bp

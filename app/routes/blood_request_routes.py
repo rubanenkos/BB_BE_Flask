@@ -7,6 +7,14 @@ blood_request_bp = Blueprint('blood_request', __name__)
 def get_all_blood_requests(blood_bank_id):
     return BloodRequest.get_all_requests(blood_bank_id)
 
+@blood_request_bp.route('/blood-requests-hospital/<int:hospital_id>', methods=['GET'])
+def get_all_blood_requests_hospital(hospital_id):
+    return BloodRequest.get_all_requests_hospital(hospital_id)
+
+@blood_request_bp.route('/blood-requests-analytics/<int:hospital_id>', methods=['GET'])
+def get_requests_analytics_hospital(hospital_id):
+    return BloodRequest.get_requests_analytics_by_hospital(hospital_id)
+
 @blood_request_bp.route('/blood-request/<int:request_blood_id>', methods=['GET'])
 def get_blood_request_by_id(request_blood_id):
     return BloodRequest.get_request_by_id(request_blood_id)

@@ -1,3 +1,7 @@
+from datetime import date
+
+from flask import jsonify
+
 from app import db
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship, backref
@@ -27,6 +31,66 @@ class BloodRequest(db.Model):
         except Exception as e:
             return ErrorHandler.handle_error(e, message="Bank not found", status_code=404)
 
+    @staticmethod
+    def get_all_requests_hospital(hospital_id):
+        try:
+            requests = BloodRequest.query.filter_by(hospital_id=hospital_id).all()
+            return BloodRequestResponse.response_all_requests(requests)
+        except Exception as e:
+            return ErrorHandler.handle_error(e, message="Hospital not found", status_code=404)
+
+    @staticmethod
+    def get_requests_analytics_by_hospital(hospital_id):
+        try:
+            from sqlalchemy import extract
+
+            requests = BloodRequest.query.filter_by(hospital_id=hospital_id).all()
+
+            total_requests = len(requests)
+
+            current_month = date.today().month
+            current_year = date.today().year
+            monthly_requests = BloodRequest.query.filter(
+                BloodRequest.hospital_id == hospital_id,
+                extract('month', BloodRequest.request_date) == current_month,
+                extract('year', BloodRequest.request_date) == current_year
+            ).count()
+
+
+            completed_requests = BloodRequest.query.filter_by(
+                hospital_id=hospital_id,
+                status="Delivered"
+            ).count()
+
+            waiting_requests = BloodRequest.query.filter_by(
+                hospital_id=hospital_id,
+                status="Waiting for processing"
+            ).count()
+
+            transit_requests = BloodRequest.query.filter_by(
+                hospital_id=hospital_id,
+                status="In Transit"
+            ).count()
+
+            assigned_requests = BloodRequest.query.filter_by(
+                hospital_id=hospital_id,
+                status="Assigned"
+            ).count()
+
+            response_data = {
+                "hospital_id": hospital_id,
+                "total_requests": total_requests,
+                "current_month_requests": monthly_requests,
+                "completed_requests": completed_requests,
+                "waiting_requests": waiting_requests,
+                "transit": transit_requests,
+                "assigned_requests": assigned_requests,
+            }
+
+            return jsonify(response_data), 200
+
+        except Exception as e:
+            return ErrorHandler.handle_error(e, message="Failed to retrieve analytics", status_code=500)
 
     @staticmethod
     def get_request_by_id(request_blood_id):
@@ -57,7 +121,7 @@ class BloodRequest(db.Model):
         try:
             request_record = db.session.query(BloodRequest).filter_by(request_blood_id=request_blood_id).first()
             request_record.blood_bank_id = blood_bank_id
-            request_record.status = "waiting for processing"
+            request_record.status = "Waiting for processing"
             db.session.commit()
             return {"message": "Blood request send successfully"}, 201
         except Exception as e:
@@ -70,8 +134,30 @@ class BloodRequest(db.Model):
 
             pending_requests = db.session.query(BloodRequest).filter_by(
                 blood_bank_id=blood_bank_id,
-                status="waiting for processing"
+                status="Waiting for processing"
             ).all()
             return BloodRequestResponse.response_all_requests(pending_requests)
         except Exception as e:
             return ErrorHandler.handle_error(e, message="Bank not found", status_code=404)
+
+    @staticmethod
+    def update_request(request_blood_id, data):
+        try:
+            request_record = BloodRequest.query.get(request_blood_id)
+            if not request_record:
+                return ErrorHandler.handle_error(None, message="Blood request not found", status_code=404)
+
+            if "status" in data:
+                request_record.status = data["status"]
+            if "request_date" in data:
+                request_record.request_date = data["request_date"]
+            if "hospital_id" in data:
+                request_record.hospital_id = data["hospital_id"]
+            if "blood_bank_id" in data:
+                request_record.blood_bank_id = data["blood_bank_id"]
+
+            db.session.commit()
+            return {"message": "Blood request updated successfully"}, 200
+        except Exception as e:
+            db.session.rollback()
+            return ErrorHandler.handle_error(e, message="Failed to update blood request", status_code=500)

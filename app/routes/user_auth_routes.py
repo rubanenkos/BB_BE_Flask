@@ -11,6 +11,10 @@ def register():
     data = request.get_json()
     return User.create_user(data)
 
+@auth_bp.route('/users', methods=['GET'])
+def get_all_users():
+    return User.get_all_users()
+
 @auth_bp.route('/user/<int:user_id>', methods=['GET'])
 def get_user_by_user_id(user_id):
     return User.get_user_by_user_id(user_id)
@@ -26,6 +30,19 @@ def get_user_by_email():
 def login():
     data = request.get_json()
     return User.authenticate(data)
+
+@auth_bp.route('/user/change-password/<int:user_id>', methods=['POST'])
+def change_password(user_id):
+    data = request.get_json()
+
+    old_password = data.get('old_password')
+    new_password = data.get('new_password')
+
+    if not old_password or not new_password:
+        return {"error": "Both old_password and new_password are required"}, 400
+
+    return User.change_password(user_id, old_password, new_password)
+
 
 
 @auth_bp.route('/protected', methods=['GET'])

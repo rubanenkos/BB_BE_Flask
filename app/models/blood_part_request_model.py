@@ -11,7 +11,7 @@ class BloodPartRequest(db.Model):
     request_blood_id = Column(Integer, ForeignKey('blood_request.request_blood_id'), primary_key=True)
     blood_part_id = Column(Integer, ForeignKey('blood_part.blood_part_id'), primary_key=True)
     quantity = Column(Integer, nullable=False)
-    blood_group_id = Column(Integer, ForeignKey('blood_group.blood_group_id'), nullable=False)
+    blood_group_id = Column(Integer, ForeignKey('blood_group.blood_group_id'), primary_key=True)
 
     blood_request = relationship("BloodRequest", backref=backref("blood_part_requests", lazy=True))
     blood_part = relationship("BloodPart", backref=backref("blood_part_requests", lazy=True))
